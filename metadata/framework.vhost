@@ -1,0 +1,16 @@
+<VirtualHost *:80>
+  ServerName framework
+  DocumentRoot "C:\Users\mmmartin\Documents\GitHub\Framework_Tutorial"
+
+  AddDefaultCharset UTF-8
+	
+  <Directory "C:\Users\mmmartin\Documents\GitHub\Framework_Tutorial">
+    Options Indexes FollowSymLinks Includes ExecCGI
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+    Require all granted
+  </Directory>
+
+</VirtualHost>	
+		
