@@ -1,36 +1,37 @@
 {% extends 'layout.html' %}
 
-{% block page_title %}My Blog Administration{% endblock %}
+{% block page_title %}Task List Administration{% endblock %}
 
 {% block content %}	
-	<h1>My Blog Administration</h1>
+	<h1>My Tasks Administration</h1>
 
-	<p><a href="/admin/add">Add Article</a></p>
+	<p><a href="/admin/add">Add Task</a></p>
+	<p><a href="/">Home</a></p>
 
-	{% if articles %}
+	{% if tasks %}
 		<table>
 			<thead>
 				<tr>
-					<th>Title</th>
+					<th>Summary</th>
+					<th>Reporter</th>
 					<th>Date</th>
-					<th>Author</th>
 					<th colspan="2">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
 			
-				{% for article in articles %}
+				{% for task in tasks %}
 					<tr>
-						<td>{{ article.title }}</td>
-						<td>{{ article.author }}</td>
-						<td>{{ article.timestamp|date('jS F Y') }}</td>
-						<td><a href="/admin/edit/{{ article.id }}">Edit</a></td>
-						<td><a href="/admin/delete/{{ article.id }}">Delete</a></td>
+						<td>{{ task.summary }}</td>
+						<td>{{ task.reporter }}</td>
+						<td>{{ task.timecreated|date('jS F Y') }}</td>
+						<td><a href="/admin/edit/{{ task.id }}">Edit</a></td>
+						<td><a href="/admin/delete/{{ task.id }}">Delete</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 	{% else %}
-		<p>There are currently no articles.</p>
+		<p>There are currently no tasks.</p>
 	{% endif %}
 {% endblock %}

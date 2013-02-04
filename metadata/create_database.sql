@@ -1,7 +1,7 @@
 DROP DATABASE IF EXISTS task_list;
 CREATE DATABASE `task_list` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `task_list`;
-CREATE TABLE IF NOT EXISTS `mmtasks` (
+CREATE TABLE IF NOT EXISTS `task` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `timecreated` datetime NOT NULL,
   `summary` varchar(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `mmtasks` (
   `status` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-INSERT INTO `mmtasks` (`id`,`timecreated`, `summary`, `content`, `reporter`, `owner`, `rank`, `status`) VALUES
+INSERT INTO `task` (`id`,`timecreated`, `summary`, `content`, `reporter`, `owner`, `rank`, `status`) VALUES
 (1, '2013-02-01 15:00:00', 'Sketch UI', 'Mockups for UI', 'mmmartin','mmmartin', 1, 'todo'),
 (2, '2013-02-01 15:00:00', 'Get stuff displaying!', 'Display the tasks on a web page, ranked in priority order', 'mmmartin','mmmartin', 2, 'todo'),
 (3, '2013-02-01 15:00:00', 'Let people add stuff!', 'Add a form to allow people to create their own tasks', 'mmmartin','mmmartin', 3, 'todo'),

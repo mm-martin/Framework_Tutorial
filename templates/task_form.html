@@ -1,0 +1,32 @@
+<form action="{{ action_url }}" method="post">
+	<h1>{{ action_name }} Task</h1>
+	
+	<p>
+		<label for="summary">Summary: </label><br />
+		<input type="text" name="summary" value="{{ task.summary|default('') }}" id="summary" />
+	</p>
+
+	<p>
+		<label for="reporter">Created By: </label><br />
+		<input type="text" name="reporter" value="{{ task.reporter|default('') }}" id="reporter" />
+	</p>
+
+	<p>
+		<label for="content">Description: </label><br />
+		<textarea name="content" id="content" rows="10" cols="20">{{ task.content|default('') }}</textarea>
+	</p>	
+
+	<p>
+		<label for="owner">Owner: </label><br />
+		<input type="text" name="owner" value="{{ task.owner|default('mmmartin') }}" id="owner" />
+	</p>
+
+	<p>
+		<label for="status">Status: </label><br />
+		<input type="status" name="status" value="{{ task.status|default('todo') }}" id="status" />
+	</p>
+
+	<p>
+		<input type="submit" value="{{ action_name }} Task" />
+	</p>
+</form>

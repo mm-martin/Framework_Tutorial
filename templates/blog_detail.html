@@ -1,10 +1,12 @@
 {% extends 'layout.html' %}
 
-{% block page_title %}{{ article.title }}{% endblock %}
+{% block page_title %}{{ task.summary }}{% endblock %}
 
 {% block content %}
-	<h1>{{ article.title }}</h1>
-	<p>Published: {{ article.timestamp|date('jS F Y') }} by {{ article.author }}</p>
-	<p>{{ article.content }}</p>
+	<h1>{{ task.summary }}</h1>
+	<p>Created: {{ task.timecreated|date('jS F Y') }} by {{ task.reporter }}</p>
+	<p>Description: {{ task.content }}</p>
+	<p>Owned By: {{ task.owner }}</p>
+	<p>Status: {{ task.status }}</p>
 	<p><a href="/">Back to Homepage</a></p>
 {% endblock %}

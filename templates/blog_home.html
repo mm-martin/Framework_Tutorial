@@ -1,12 +1,15 @@
 {% extends 'layout.html' %}
 
-{% block page_title %}My Blog{% endblock %}
+{% block page_title %}My Tasks{% endblock %}
 
 {% block content %}	
-	{% for article in articles %}
-		<h1><a href="/view/{{ article.id }}">{{ article.title }}</a> by {{ article.author }}</h1>
-		<p>{{ article.summary }}</p>
+	<p><a href="/admin">Admin</a></p>
+	{% for task in tasks %}
+		<h1><a href="/view/{{ task.id }}">{{ task.summary }}</a></h1>
+		<p>Description: {{ task.content }}</p>
+		<p>Status: {{ task.status }}</p>
+		<p>Owner: {{ task.owner }}</p>
 	{% else %}	
-		<p>There are currently no articles.</p>
+		<p>You currently have no tasks.</p>
 	{% endfor %}
 {% endblock %}

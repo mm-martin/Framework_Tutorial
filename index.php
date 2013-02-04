@@ -12,12 +12,12 @@ require 'Paris/idiorm.php';
 require 'Paris/paris.php';
 
 // Models
-require 'models/Article.php';
+require 'models/Task.php';
 
 // Configuration
 TwigView::$twigDirectory = __DIR__ . '/Twig/lib/Twig/';
 
-ORM::configure('mysql:host=localhost;dbname=blog');
+ORM::configure('mysql:host=localhost;dbname=task_list');
 ORM::configure('username', 'root');
 ORM::configure('password', '');
 
@@ -47,32 +47,32 @@ $authCheck = function() use ($app) {
 
 // Blog Homepage.
 $app->get('/', function() use ($app) {
-	$articles = Model::factory('Article')
-					->order_by_desc('timestamp')
+	$tasks = Model::factory('Task')
+					->order_by_desc('rank')
 					->find_many();
 					
-	return $app->render('blog_home.html', array('articles' => $articles));		
+	return $app->render('blog_home.html', array('tasks' => $tasks));		
 });
 
 // Blog View.
 $app->get('/view/(:id)', function($id) use ($app) {
-	$article = Model::factory('Article')->find_one($id);
-	if (! $article instanceof Article) {
+	$task = Model::factory('Task')->find_one($id);
+	if (! $task instanceof Task) {
 		$app->notFound();
 	}
 	
-	return $app->render('blog_detail.html', array('article' => $article));
+	return $app->render('blog_detail.html', array('task' => $task));
 });
 
 
 
 // Admin Home.
 $app->get('/admin', $authCheck, function() use ($app) {
-	$articles = Model::factory('Article')
-					->order_by_desc('timestamp')
+	$tasks = Model::factory('Task')
+					->order_by_desc('rank')
 					->find_many();
 					
-	return $app->render('admin_home.html', array('articles' => $articles));
+	return $app->render('admin_home.html', array('tasks' => $tasks));
 });
 
 // Admin Add.
@@ -82,53 +82,55 @@ $app->get('/admin/add', $authCheck, function() use ($app) {
 
 // Admin Add - POST.
 $app->post('/admin/add', $authCheck, function() use ($app) {
-	$article 			= Model::factory('Article')->create();
-	$article->title 	= $app->request()->post('title');
-	$article->author 	= $app->request()->post('author');
-	$article->summary 	= $app->request()->post('summary');
-	$article->content 	= $app->request()->post('content');
-	$article->timestamp = date('Y-m-d H:i:s');
-	$article->save();
+	$task 			= Model::factory('Task')->create();
+	$task->summary 	= $app->request()->post('summary');
+	$task->content 	= $app->request()->post('content');
+	$task->reporter = $app->request()->post('reporter');
+	$task->owner 	= $app->request()->post('owner');
+	$task->status 	= $app->request()->post('status');
+	//todo - need to append to rank (dependant on context)
+	//$task->rank 	= $app->request()->post('rank');
+	$task->timecreated = date('Y-m-d H:i:s');
+	$task->save();
 	
 	$app->redirect('/admin');
 });
 
 // Admin Edit.
 $app->get('/admin/edit/(:id)', $authCheck, function($id) use ($app) {
-	$article = Model::factory('Article')->find_one($id);
-	if (! $article instanceof Article) {
+	$task = Model::factory('Task')->find_one($id);
+	if (! $task instanceof Task) {
 		$app->notFound();
 	}	
 	
 	return $app->render('admin_input.html', array(
 		'action_name' 	=> 	'Edit', 
 		'action_url' 	=> 	'/admin/edit/' . $id,
-		'article'		=> 	$article
+		'task'		=> 	$task
 	));
 });
 
 // Admin Edit - POST.
 $app->post('/admin/edit/(:id)', $authCheck, function($id) use ($app) {
-	$article = Model::factory('Article')->find_one($id);
-	if (! $article instanceof Article) {
+	$task = Model::factory('Task')->find_one($id);
+	if (! $task instanceof Task) {
 		$app->notFound();
 	}
 	
-	$article->title 	= $app->request()->post('title');
-	$article->author 	= $app->request()->post('author');
-	$article->summary 	= $app->request()->post('summary');
-	$article->content 	= $app->request()->post('content');
-	$article->timestamp = date('Y-m-d H:i:s');
-	$article->save();
+	$task->summary 	= $app->request()->post('summary');
+	$task->owner 	= $app->request()->post('owner');
+	$task->status 	= $app->request()->post('status');
+	$task->timecreated = date('Y-m-d H:i:s');
+	$task->save();
 	
 	$app->redirect('/admin');
 });
 
 // Admin Delete.
 $app->get('/admin/delete/(:id)', $authCheck, function($id) use ($app) {
-	$article = Model::factory('Article')->find_one($id);
-	if ($article instanceof Article) {
-		$article->delete();
+	$task = Model::factory('Task')->find_one($id);
+	if ($task instanceof Task) {
+		$task->delete();
 	}
 	
 	$app->redirect('/admin');
