@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Filters &mdash; Paris 1.2.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.2.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Paris 1.2.3 documentation" href="index.html" />
+    <link rel="next" title="Transactions" href="transactions.html" />
+    <link rel="prev" title="Querying" href="querying.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="transactions.html" title="Transactions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="querying.html" title="Querying"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Paris 1.2.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="filters">
+<h1>Filters<a class="headerlink" href="#filters" title="Permalink to this headline">¶</a></h1>
+<p>It is often desirable to create reusable queries that can be used to
+extract particular subsets of data without repeating large sections of
+code. Paris allows this by providing a method called <tt class="docutils literal"><span class="pre">filter</span></tt> which
+can be chained in queries alongside the existing Idiorm query API. The
+filter method takes the name of a <strong>public static</strong> method on the
+current Model subclass as an argument. The supplied method will be
+called at the point in the chain where <tt class="docutils literal"><span class="pre">filter</span></tt> is called, and will be
+passed the <tt class="docutils literal"><span class="pre">ORM</span></tt> object as the first parameter. It should return the
+ORM object after calling one or more query methods on it. The method
+chain can then be continued if necessary.</p>
+<p>It is easiest to illustrate this with an example. Imagine an application
+in which users can be assigned a role, which controls their access to
+certain pieces of functionality. In this situation, you may often wish
+to retrieve a list of users with the role ‘admin’. To do this, add a
+static method called (for example) <tt class="docutils literal"><span class="pre">admins</span></tt> to your Model class:</p>
+<div class="highlight-python"><pre>class User extends Model {
+    public static function admins($orm) {
+        return $orm-&gt;where('role', 'admin');
+    }
+}</pre>
+</div>
+<p>You can then use this filter in your queries:</p>
+<div class="highlight-python"><pre>$admin_users = Model::factory('User')-&gt;filter('admins')-&gt;find_many();</pre>
+</div>
+<p>You can also chain it with other methods as normal:</p>
+<div class="highlight-python"><pre>$young_admins = Model::factory('User')
+                    -&gt;filter('admins')
+                    -&gt;where_lt('age', 18)
+                    -&gt;find_many();</pre>
+</div>
+<div class="section" id="filters-with-arguments">
+<h2>Filters with arguments<a class="headerlink" href="#filters-with-arguments" title="Permalink to this headline">¶</a></h2>
+<p>You can also pass arguments to custom filters. Any additional arguments
+passed to the <tt class="docutils literal"><span class="pre">filter</span></tt> method (after the name of the filter to apply)
+will be passed through to your custom filter as additional arguments
+(after the ORM instance).</p>
+<p>For example, let’s say you wish to generalise your role filter (see
+above) to allow you to retrieve users with any role. You can pass the
+role name to the filter as an argument:</p>
+<div class="highlight-python"><pre>class User extends Model {
+    public static function has_role($orm, $role) {
+        return $orm-&gt;where('role', $role);
+    }
+}
+
+$admin_users = Model::factory('User')-&gt;filter('has_role', 'admin')-&gt;find_many();
+$guest_users = Model::factory('User')-&gt;filter('has_role', 'guest')-&gt;find_many();</pre>
+</div>
+<p>These examples may seem simple (<tt class="docutils literal"><span class="pre">filter('has_role',</span> <span class="pre">'admin')</span></tt> could
+just as easily be achieved using <tt class="docutils literal"><span class="pre">where('role',</span> <span class="pre">'admin')</span></tt>), but
+remember that filters can contain arbitrarily complex code - adding
+<tt class="docutils literal"><span class="pre">raw_where</span></tt> clauses or even complete <tt class="docutils literal"><span class="pre">raw_query</span></tt> calls to perform
+joins, etc. Filters provide a powerful mechanism to hide complexity in
+your model’s query API.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Filters</a><ul>
+<li><a class="reference internal" href="#filters-with-arguments">Filters with arguments</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="querying.html"
+                        title="previous chapter">Querying</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="transactions.html"
+                        title="next chapter">Transactions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/filters.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="transactions.html" title="Transactions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="querying.html" title="Querying"
+             >previous</a> |</li>
+        <li><a href="index.html">Paris 1.2.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Jamie Matthews, Simon Holywell, Durham Hale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

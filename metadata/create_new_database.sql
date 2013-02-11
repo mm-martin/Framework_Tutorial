@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 	`user_id` int unsigned NOT NULL AUTO_INCREMENT,
 	`user_name` char(15) NOT NULL,
 	`full_name` varchar(255) NOT NULL,
-	`password` char(15),
+	`password` char(15) NOT NULL,
 	PRIMARY KEY (`user_id`)
 ) ENGINE=INNODB  DEFAULT CHARSET=utf8;
 
@@ -109,6 +109,9 @@ ALTER TABLE task_event ADD FOREIGN KEY (`event_type`) references event_type(`eve
 ALTER TABLE task_event ADD FOREIGN KEY (`event_actor`) references user(`user_id`);
 
 
+INSERT INTO `user` (`user_id`,`user_name`, `full_name`, `password`) VALUES
+(1, 'mmmartin', 'Martin Lynagh', 'bunnyfunster'),
+(2, 'mmmarvin', 'Evil Twin of Martin Lynagh', 'bunnyfunster');
 -- INSERT INTO `task` (`id`,`timecreated`, `summary`, `content`, `reporter`, `owner`, `rank`, `status`) VALUES
 -- (1, `2013-02-01 15:00:00`, `Sketch UI`, `Mockups for UI`, `mmmartin`,`mmmartin`, 1, `todo`),
 -- (2, `2013-02-01 15:00:00`, `Get stuff displaying!`, `Display the tasks on a web page, ranked in priority order`, `mmmartin`,`mmmartin`, 2, `todo`),

@@ -1,7 +1,7 @@
 <?php
 // Auth Details.
-define('USERNAME', 'admin');
-define('PASSWORD', 'password');
+define('USERNAME', 'mmmartin');
+define('PASSWORD', 'bunnyfunster');
 
 // Slim PHP
 require 'Slim/Slim.php';
@@ -13,10 +13,12 @@ require 'Paris/paris.php';
 
 // Models
 require 'models/Task.php';
+require 'models/User.php';
 
 // Configuration
 TwigView::$twigDirectory = __DIR__ . '/Twig/lib/Twig/';
 
+// ORM::configure('mysql:host=localhost;dbname=mm_work');
 ORM::configure('mysql:host=localhost;dbname=task_list');
 ORM::configure('username', 'root');
 ORM::configure('password', '');
@@ -31,7 +33,6 @@ define("SCREEN_ADD", 2);
 $screen = SCREEN_HOME;
 
 
-
 // Start Slim and set up logging
 $app = new Slim(array('view' => new TwigView,
    'debug' => true,
@@ -43,10 +44,15 @@ $log = $app->getLog();
 
 
 //Auth Check.
-$authCheck = function() use ($app) {
+$authCheck = function() use ($app, $log) {
+
 	$authRequest 	= isset($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
 	$authUser 		= $authRequest && $_SERVER['PHP_AUTH_USER'] === USERNAME;
 	$authPass 		= $authRequest && $_SERVER['PHP_AUTH_PW'] === PASSWORD;
+
+	$log->info('Req: '.$authRequest);
+	$log->info('User: '.$authUser);
+	$log->info('Pass: '.$authPass);
 
 	if (! $authUser || ! $authPass) {
 		$app->response()->header('WWW-Authenticate: Basic realm="My Blog Administration"', '');
@@ -58,11 +64,11 @@ $authCheck = function() use ($app) {
 };
 
 // Blog Homepage.
-$app->get('/', function() use ($app, $screen, $log) {
+$app->get('/', $authCheck, function() use ($app, $screen, $log) {
 	$screen = SCREEN_HOME;
-	$log->info('Screen: '.$screen);
+	$log->info('get/');
 	$tasks = Model::factory('Task')
-					->order_by_desc('rank')
+					->order_by_asc('rank')
 					->find_many();
 	return $app->render('blog_home.html', array('tasks' => $tasks, 'screen'=>$screen));		
 });
@@ -70,7 +76,7 @@ $app->get('/', function() use ($app, $screen, $log) {
 // Blog View.
 $app->get('/view/(:id)', function($id) use ($app, $screen, $log){
 	$screen = SCREEN_HOME;
-	$log->info('Screen: '.$screen);
+	$log->info('get/view/(:id)');
 	$task = Model::factory('Task')->find_one($id);
 	if (! $task instanceof Task) {
 		$app->notFound();
@@ -84,8 +90,9 @@ $app->get('/view/(:id)', function($id) use ($app, $screen, $log){
 // Admin Home.
 $app->get('/admin', $authCheck, function() use ($app, $screen, $log){
 	$screen = SCREEN_ADMIN;
+	$log->info('/admin)');
 	$tasks = Model::factory('Task')
-					->order_by_desc('rank')
+					->order_by_asc('rank')
 					->find_many();
 	$screen = 1;					
 	return $app->render('admin_home.html', array('tasks' => $tasks,  'screen'=>$screen));
@@ -93,12 +100,14 @@ $app->get('/admin', $authCheck, function() use ($app, $screen, $log){
 
 // Admin Add.
 $app->get('/admin/add', $authCheck, function() use ($app, $screen, $log){
+	$log->info('/admin/add');
 	$screen = SCREEN_ADD;
 	return $app->render('admin_input.html', array('action_name' => 'Add', 'action_url' => '/admin/add',  'screen'=>$screen));
 });
 
 // Admin Add - POST.
 $app->post('/admin/add', $authCheck, function() use ($app, $screen, $log){
+	$log->info('/admin/add post');
 	$task 			= Model::factory('Task')->create();
 	$task->summary 	= $app->request()->post('summary');
 	$task->content 	= $app->request()->post('content');
@@ -117,6 +126,7 @@ $app->post('/admin/add', $authCheck, function() use ($app, $screen, $log){
 
 // Admin Edit.
 $app->get('/admin/edit/(:id)', $authCheck, function($id) use ($app, $screen, $log){
+	$log->info('/admin/edit/(:id)');
 	$task = Model::factory('Task')->find_one($id);
 	if (! $task instanceof Task) {
 		$app->notFound();
@@ -132,6 +142,7 @@ $app->get('/admin/edit/(:id)', $authCheck, function($id) use ($app, $screen, $lo
 
 // Admin Edit - POST.
 $app->post('/admin/edit/(:id)', $authCheck, function($id) use ($app, $screen, $log){
+	$log->info('/admin/edit/(:id) - POST');
 	$task = Model::factory('Task')->find_one($id);
 	if (! $task instanceof Task) {
 		$app->notFound();
@@ -151,6 +162,7 @@ $app->post('/admin/edit/(:id)', $authCheck, function($id) use ($app, $screen, $l
 
 // Admin Delete.
 $app->get('/admin/delete/(:id)', $authCheck, function($id) use ($app, $screen, $log){
+	$log->info('/admin/delete/(:id) -');
 	$task = Model::factory('Task')->find_one($id);
 	if ($task instanceof Task) {
 		$task->delete();

@@ -6,7 +6,7 @@
 		<echo>Creating database ${db} on host ${database.host}</echo>
 		<input message="Please enter root password:" addproperty="root.password"/>
     	<echo>creating local database ${db}</echo>
-		<exec dir="${basedir}" executable="mysql" failonerror="false" input="create_new_database.sql">
+		<exec dir="${basedir}" executable="mysql" failonerror="false" input="create_database.sql">
 		    <arg line="--user=root --host=${database.host}" />
 		</exec>
 		<!-- <antcall target="update-db"/> -->

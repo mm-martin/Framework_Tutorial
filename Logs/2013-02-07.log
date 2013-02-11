@@ -1,0 +1,153 @@
+[INFO] 2013-02-07T15:45:24+01:00 - Screen: 0
+[ERROR] 2013-02-07T15:45:25+01:00 - exception 'PDOException' with message 'SQLSTATE[HY000] [1049] Unknown database 'mmwork'' in C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php:186
+Stack trace:
+#0 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php(186): PDO->__construct('mysql:host=loca...', 'root', '', NULL)
+#1 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\paris.php(91): ORM::_setup_db()
+#2 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\paris.php(229): ORMWrapper::for_table('task')
+#3 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(64): Model::factory('Task')
+#4 [internal function]: {closure}()
+#5 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Route.php(343): call_user_func_array(Object(Closure), Array)
+#6 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Slim.php(1016): Slim_Route->dispatch()
+#7 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(166): Slim->run()
+#8 {main}
+[INFO] 2013-02-07T15:53:11+01:00 - Screen: 0
+[ERROR] 2013-02-07T16:15:13+01:00 - exception 'ErrorException' with message 'Array to string conversion' in C:\Users\mmmartin\Documents\GitHub\task_list\index.php:51
+Stack trace:
+#0 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(51): Slim::handleErrors(8, 'Array to string...', 'C:\Users\mmmart...', 51, Array)
+#1 [internal function]: {closure}()
+#2 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Route.php(338): call_user_func(Object(Closure))
+#3 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Slim.php(1016): Slim_Route->dispatch()
+#4 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(172): Slim->run()
+#5 {main}
+[INFO] 2013-02-07T16:20:32+01:00 - Screen: 0
+[INFO] 2013-02-07T16:46:48+01:00 - Screen: 0
+[ERROR] 2013-02-07T16:46:48+01:00 - exception 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Unknown column 'id' in 'where clause'' in C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php:966
+Stack trace:
+#0 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php(966): PDOStatement->execute(Array)
+#1 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php(362): ORM->_run()
+#2 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\paris.php(115): ORM->find_one('5')
+#3 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(78): ORMWrapper->find_one('5')
+#4 [internal function]: {closure}('5')
+#5 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Route.php(343): call_user_func_array(Object(Closure), Array)
+#6 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Slim.php(1016): Slim_Route->dispatch()
+#7 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(170): Slim->run()
+#8 {main}
+[ERROR] 2013-02-07T18:18:34+01:00 - exception 'ErrorException' with message 'Use of undefined constant authRequest - assumed 'authRequest'' in C:\Users\mmmartin\Documents\GitHub\task_list\index.php:52
+Stack trace:
+#0 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(52): Slim::handleErrors(8, 'Use of undefine...', 'C:\Users\mmmart...', 52, Array)
+#1 [internal function]: {closure}()
+#2 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Route.php(338): call_user_func(Object(Closure))
+#3 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Slim.php(1016): Slim_Route->dispatch()
+#4 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(172): Slim->run()
+#5 {main}
+[ERROR] 2013-02-07T18:18:36+01:00 - exception 'ErrorException' with message 'Use of undefined constant authRequest - assumed 'authRequest'' in C:\Users\mmmartin\Documents\GitHub\task_list\index.php:52
+Stack trace:
+#0 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(52): Slim::handleErrors(8, 'Use of undefine...', 'C:\Users\mmmart...', 52, Array)
+#1 [internal function]: {closure}()
+#2 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Route.php(338): call_user_func(Object(Closure))
+#3 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Slim.php(1016): Slim_Route->dispatch()
+#4 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(172): Slim->run()
+#5 {main}
+[INFO] 2013-02-07T18:18:58+01:00 - Req: 1
+[INFO] 2013-02-07T18:18:58+01:00 - User: 1
+[INFO] 2013-02-07T18:18:58+01:00 - Pass: 1
+[INFO] 2013-02-07T18:18:58+01:00 - Screen: 0
+[INFO] 2013-02-07T18:18:58+01:00 - Screen: 0
+[INFO] 2013-02-07T18:27:39+01:00 - Req: 1
+[INFO] 2013-02-07T18:27:39+01:00 - User: 1
+[INFO] 2013-02-07T18:27:39+01:00 - Pass: 1
+[INFO] 2013-02-07T18:27:39+01:00 - Screen: 0
+[INFO] 2013-02-07T18:27:39+01:00 - Screen: 0
+[INFO] 2013-02-07T18:55:17+01:00 - Req: 1
+[INFO] 2013-02-07T18:55:17+01:00 - User: 1
+[INFO] 2013-02-07T18:55:17+01:00 - Pass: 1
+[INFO] 2013-02-07T18:55:17+01:00 - get/
+[ERROR] 2013-02-07T18:55:17+01:00 - exception 'PDOException' with message 'SQLSTATE[HY000] [1049] Unknown database 'task_list'' in C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php:186
+Stack trace:
+#0 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\idiorm.php(186): PDO->__construct('mysql:host=loca...', 'root', '', NULL)
+#1 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\paris.php(91): ORM::_setup_db()
+#2 C:\Users\mmmartin\Documents\GitHub\task_list\Paris\paris.php(229): ORMWrapper::for_table('task')
+#3 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(70): Model::factory('Task')
+#4 [internal function]: {closure}()
+#5 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Route.php(343): call_user_func_array(Object(Closure), Array)
+#6 C:\Users\mmmartin\Documents\GitHub\task_list\Slim\Slim.php(1016): Slim_Route->dispatch()
+#7 C:\Users\mmmartin\Documents\GitHub\task_list\index.php(178): Slim->run()
+#8 {main}
+[INFO] 2013-02-07T18:58:10+01:00 - Req: 1
+[INFO] 2013-02-07T18:58:10+01:00 - User: 1
+[INFO] 2013-02-07T18:58:10+01:00 - Pass: 1
+[INFO] 2013-02-07T18:58:10+01:00 - get/
+[INFO] 2013-02-07T19:25:39+01:00 - Req: 1
+[INFO] 2013-02-07T19:25:39+01:00 - User: 1
+[INFO] 2013-02-07T19:25:39+01:00 - Pass: 1
+[INFO] 2013-02-07T19:25:39+01:00 - get/
+[INFO] 2013-02-07T19:25:41+01:00 - Req: 1
+[INFO] 2013-02-07T19:25:41+01:00 - User: 1
+[INFO] 2013-02-07T19:25:41+01:00 - Pass: 1
+[INFO] 2013-02-07T19:25:41+01:00 - get/
+[INFO] 2013-02-07T19:25:49+01:00 - Req: 1
+[INFO] 2013-02-07T19:25:49+01:00 - User: 1
+[INFO] 2013-02-07T19:25:49+01:00 - Pass: 1
+[INFO] 2013-02-07T19:25:49+01:00 - get/
+[INFO] 2013-02-07T19:25:54+01:00 - Req: 1
+[INFO] 2013-02-07T19:25:54+01:00 - User: 1
+[INFO] 2013-02-07T19:25:54+01:00 - Pass: 1
+[INFO] 2013-02-07T19:25:54+01:00 - get/
+[INFO] 2013-02-07T19:26:37+01:00 - Req: 1
+[INFO] 2013-02-07T19:26:37+01:00 - User: 1
+[INFO] 2013-02-07T19:26:37+01:00 - Pass: 1
+[INFO] 2013-02-07T19:26:37+01:00 - get/
+[INFO] 2013-02-07T19:26:40+01:00 - get/view/(:id)
+[INFO] 2013-02-07T19:26:43+01:00 - Req: 1
+[INFO] 2013-02-07T19:26:43+01:00 - User: 1
+[INFO] 2013-02-07T19:26:43+01:00 - Pass: 1
+[INFO] 2013-02-07T19:26:43+01:00 - get/
+[INFO] 2013-02-07T19:27:46+01:00 - Req: 1
+[INFO] 2013-02-07T19:27:46+01:00 - User: 1
+[INFO] 2013-02-07T19:27:46+01:00 - Pass: 1
+[INFO] 2013-02-07T19:27:46+01:00 - get/
+[INFO] 2013-02-07T19:27:49+01:00 - Req: 1
+[INFO] 2013-02-07T19:27:49+01:00 - User: 1
+[INFO] 2013-02-07T19:27:49+01:00 - Pass: 1
+[INFO] 2013-02-07T19:27:49+01:00 - get/
+[INFO] 2013-02-07T19:29:28+01:00 - Req: 1
+[INFO] 2013-02-07T19:29:28+01:00 - User: 1
+[INFO] 2013-02-07T19:29:28+01:00 - Pass: 1
+[INFO] 2013-02-07T19:29:28+01:00 - get/
+[INFO] 2013-02-07T19:29:36+01:00 - get/view/(:id)
+[INFO] 2013-02-07T19:29:41+01:00 - Req: 1
+[INFO] 2013-02-07T19:29:41+01:00 - User: 1
+[INFO] 2013-02-07T19:29:41+01:00 - Pass: 1
+[INFO] 2013-02-07T19:29:41+01:00 - /admin)
+[INFO] 2013-02-07T19:29:49+01:00 - Req: 1
+[INFO] 2013-02-07T19:29:49+01:00 - User: 1
+[INFO] 2013-02-07T19:29:49+01:00 - Pass: 1
+[INFO] 2013-02-07T19:29:49+01:00 - /admin/edit/(:id)
+[INFO] 2013-02-07T19:29:59+01:00 - Req: 1
+[INFO] 2013-02-07T19:29:59+01:00 - User: 1
+[INFO] 2013-02-07T19:29:59+01:00 - Pass: 1
+[INFO] 2013-02-07T19:29:59+01:00 - get/
+[INFO] 2013-02-07T19:33:02+01:00 - Req: 1
+[INFO] 2013-02-07T19:33:02+01:00 - User: 1
+[INFO] 2013-02-07T19:33:02+01:00 - Pass: 1
+[INFO] 2013-02-07T19:33:02+01:00 - get/
+[INFO] 2013-02-07T19:33:05+01:00 - Req: 1
+[INFO] 2013-02-07T19:33:05+01:00 - User: 1
+[INFO] 2013-02-07T19:33:05+01:00 - Pass: 1
+[INFO] 2013-02-07T19:33:05+01:00 - /admin)
+[INFO] 2013-02-07T19:43:28+01:00 - Req: 1
+[INFO] 2013-02-07T19:43:28+01:00 - User: 1
+[INFO] 2013-02-07T19:43:28+01:00 - Pass: 1
+[INFO] 2013-02-07T19:43:28+01:00 - get/
+[INFO] 2013-02-07T19:43:30+01:00 - Req: 1
+[INFO] 2013-02-07T19:43:30+01:00 - User: 1
+[INFO] 2013-02-07T19:43:30+01:00 - Pass: 1
+[INFO] 2013-02-07T19:43:30+01:00 - /admin)
+[INFO] 2013-02-07T19:43:32+01:00 - Req: 1
+[INFO] 2013-02-07T19:43:32+01:00 - User: 1
+[INFO] 2013-02-07T19:43:32+01:00 - Pass: 1
+[INFO] 2013-02-07T19:43:32+01:00 - /admin/edit/(:id)
+[INFO] 2013-02-07T19:43:37+01:00 - Req: 1
+[INFO] 2013-02-07T19:43:37+01:00 - User: 1
+[INFO] 2013-02-07T19:43:37+01:00 - Pass: 1
+[INFO] 2013-02-07T19:43:37+01:00 - get/

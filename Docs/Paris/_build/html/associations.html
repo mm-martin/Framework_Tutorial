@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Associations &mdash; Paris 1.2.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.2.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Paris 1.2.3 documentation" href="index.html" />
+    <link rel="next" title="Querying" href="querying.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="querying.html" title="Querying"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Paris 1.2.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="associations">
+<h1>Associations<a class="headerlink" href="#associations" title="Permalink to this headline">¶</a></h1>
+<p>Paris provides a simple API for one-to-one, one-to-many and many-to-many
+relationships (associations) between models. It takes a different
+approach to many other ORMs, which use associative arrays to add
+configuration metadata about relationships to model classes. These
+arrays can often be deeply nested and complex, and are therefore quite
+error-prone.</p>
+<p>Instead, Paris treats the act of querying across a relationship as a
+<em>behaviour</em>, and supplies a family of helper methods to help generate
+such queries. These helper methods should be called from within
+<em>methods</em> on your model classes which are named to describe the
+relationship. These methods return ORM instances (rather than actual
+Model instances) and so, if necessary, the relationship query can be
+modified and added to before it is run.</p>
+<div class="section" id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>The following list summarises the associations provided by Paris, and
+explains which helper method supports each type of association:</p>
+<div class="section" id="one-to-one">
+<h3>One-to-one<a class="headerlink" href="#one-to-one" title="Permalink to this headline">¶</a></h3>
+<p>Use <tt class="docutils literal"><span class="pre">has_one</span></tt> in the base, and <tt class="docutils literal"><span class="pre">belongs_to</span></tt> in the associated model.</p>
+</div>
+<div class="section" id="one-to-many">
+<h3>One-to-many<a class="headerlink" href="#one-to-many" title="Permalink to this headline">¶</a></h3>
+<p>Use <tt class="docutils literal"><span class="pre">has_many</span></tt> in the base, and <tt class="docutils literal"><span class="pre">belongs_to</span></tt> in the associated
+model.</p>
+</div>
+<div class="section" id="many-to-many">
+<h3>Many-to-many<a class="headerlink" href="#many-to-many" title="Permalink to this headline">¶</a></h3>
+<p>Use <tt class="docutils literal"><span class="pre">has_many_through</span></tt> in both the base and associated models.</p>
+<p>Below, each association helper method is discussed in detail.</p>
+</div>
+</div>
+<div class="section" id="has-one">
+<h2>Has-one<a class="headerlink" href="#has-one" title="Permalink to this headline">¶</a></h2>
+<p>One-to-one relationships are implemented using the <tt class="docutils literal"><span class="pre">has_one</span></tt> method.
+For example, say we have a <tt class="docutils literal"><span class="pre">User</span></tt> model. Each user has a single
+<tt class="docutils literal"><span class="pre">Profile</span></tt>, and so the <tt class="docutils literal"><span class="pre">user</span></tt> table should be associated with the
+<tt class="docutils literal"><span class="pre">profile</span></tt> table. To be able to find the profile for a particular user,
+we should add a method called <tt class="docutils literal"><span class="pre">profile</span></tt> to the <tt class="docutils literal"><span class="pre">User</span></tt> class (note
+that the method name here is arbitrary, but should describe the
+relationship). This method calls the protected <tt class="docutils literal"><span class="pre">has_one</span></tt> method
+provided by Paris, passing in the class name of the related object. The
+<tt class="docutils literal"><span class="pre">profile</span></tt> method should return an ORM instance ready for (optional)
+further filtering.</p>
+<div class="highlight-python"><pre>class Profile extends Model {
+}
+
+class User extends Model {
+    public function profile() {
+        return $this-&gt;has_one('Profile');
+    }
+}</pre>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-python"><pre>// Select a particular user from the database
+$user = Model::factory('User')-&gt;find_one($user_id);
+
+// Find the profile associated with the user
+$profile = $user-&gt;profile()-&gt;find_one();</pre>
+</div>
+<p>By default, Paris assumes that the foreign key column on the related
+table has the same name as the current (base) table, with <tt class="docutils literal"><span class="pre">_id</span></tt>
+appended. In the example above, Paris will look for a foreign key column
+called <tt class="docutils literal"><span class="pre">user_id</span></tt> on the table used by the <tt class="docutils literal"><span class="pre">Profile</span></tt> class. To
+override this behaviour, add a second argument to your <tt class="docutils literal"><span class="pre">has_one</span></tt> call,
+passing the name of the column to use.</p>
+</div>
+<div class="section" id="has-many">
+<h2>Has many<a class="headerlink" href="#has-many" title="Permalink to this headline">¶</a></h2>
+<p>One-to-many relationships are implemented using the <tt class="docutils literal"><span class="pre">has_many</span></tt> method.
+For example, say we have a <tt class="docutils literal"><span class="pre">User</span></tt> model. Each user has several
+<tt class="docutils literal"><span class="pre">Post</span></tt> objects. The <tt class="docutils literal"><span class="pre">user</span></tt> table should be associated with the
+<tt class="docutils literal"><span class="pre">post</span></tt> table. To be able to find the posts for a particular user, we
+should add a method called <tt class="docutils literal"><span class="pre">posts</span></tt> to the <tt class="docutils literal"><span class="pre">User</span></tt> class (note that
+the method name here is arbitrary, but should describe the
+relationship). This method calls the protected <tt class="docutils literal"><span class="pre">has_many</span></tt> method
+provided by Paris, passing in the class name of the related objects.
+<strong>Pass the model class name literally, not a pluralised version</strong>. The
+<tt class="docutils literal"><span class="pre">posts</span></tt> method should return an ORM instance ready for (optional)
+further filtering.</p>
+<div class="highlight-python"><pre>class Post extends Model {
+}
+
+class User extends Model {
+    public function posts() {
+        return $this-&gt;has_many('Post'); // Note we use the model name literally - not a pluralised version
+    }
+}</pre>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-python"><pre>// Select a particular user from the database
+$user = Model::factory('User')-&gt;find_one($user_id);
+
+// Find the posts associated with the user
+$posts = $user-&gt;posts()-&gt;find_many();</pre>
+</div>
+<p>By default, Paris assumes that the foreign key column on the related
+table has the same name as the current (base) table, with <tt class="docutils literal"><span class="pre">_id</span></tt>
+appended. In the example above, Paris will look for a foreign key column
+called <tt class="docutils literal"><span class="pre">user_id</span></tt> on the table used by the <tt class="docutils literal"><span class="pre">Post</span></tt> class. To override
+this behaviour, add a second argument to your <tt class="docutils literal"><span class="pre">has_many</span></tt> call, passing
+the name of the column to use.</p>
+</div>
+<div class="section" id="belongs-to">
+<h2>Belongs to<a class="headerlink" href="#belongs-to" title="Permalink to this headline">¶</a></h2>
+<p>The ‘other side’ of <tt class="docutils literal"><span class="pre">has_one</span></tt> and <tt class="docutils literal"><span class="pre">has_many</span></tt> is <tt class="docutils literal"><span class="pre">belongs_to</span></tt>. This
+method call takes identical parameters as these methods, but assumes the
+foreign key is on the <em>current</em> (base) table, not the related table.</p>
+<div class="highlight-python"><pre>class Profile extends Model {
+    public function user() {
+        return $this-&gt;belongs_to('User');
+    }
+}
+
+class User extends Model {
+}</pre>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-python"><pre>// Select a particular profile from the database
+$profile = Model::factory('Profile')-&gt;find_one($profile_id);
+
+// Find the user associated with the profile
+$user = $profile-&gt;user()-&gt;find_one();</pre>
+</div>
+<p>Again, Paris makes an assumption that the foreign key on the current
+(base) table has the same name as the related table with <tt class="docutils literal"><span class="pre">_id</span></tt>
+appended. In the example above, Paris will look for a column named
+<tt class="docutils literal"><span class="pre">user_id</span></tt>. To override this behaviour, pass a second argument to the
+<tt class="docutils literal"><span class="pre">belongs_to</span></tt> method, specifying the name of the column on the current
+(base) table to use.</p>
+</div>
+<div class="section" id="has-many-through">
+<h2>Has many through<a class="headerlink" href="#has-many-through" title="Permalink to this headline">¶</a></h2>
+<p>Many-to-many relationships are implemented using the
+<tt class="docutils literal"><span class="pre">has_many_through</span></tt> method. This method has only one required argument:
+the name of the related model. Supplying further arguments allows us to
+override default behaviour of the method.</p>
+<p>For example, say we have a <tt class="docutils literal"><span class="pre">Book</span></tt> model. Each <tt class="docutils literal"><span class="pre">Book</span></tt> may have
+several <tt class="docutils literal"><span class="pre">Author</span></tt> objects, and each <tt class="docutils literal"><span class="pre">Author</span></tt> may have written several
+<tt class="docutils literal"><span class="pre">Books</span></tt>. To be able to find the authors for a particular book, we
+should first create an intermediary model. The name for this model
+should be constructed by concatenating the names of the two related
+classes, in alphabetical order. In this case, our classes are called
+<tt class="docutils literal"><span class="pre">Author</span></tt> and <tt class="docutils literal"><span class="pre">Book</span></tt>, so the intermediate model should be called
+<tt class="docutils literal"><span class="pre">AuthorBook</span></tt>.</p>
+<p>We should then add a method called <tt class="docutils literal"><span class="pre">authors</span></tt> to the <tt class="docutils literal"><span class="pre">Book</span></tt> class
+(note that the method name here is arbitrary, but should describe the
+relationship). This method calls the protected <tt class="docutils literal"><span class="pre">has_many_through</span></tt>
+method provided by Paris, passing in the class name of the related
+objects. <strong>Pass the model class name literally, not a pluralised
+version</strong>. The <tt class="docutils literal"><span class="pre">authors</span></tt> method should return an ORM instance ready
+for (optional) further filtering.</p>
+<div class="highlight-python"><pre>class Author extends Model {
+    public function books() {
+        return $this-&gt;has_many_through('Book');
+    }
+}
+
+class Book extends Model {
+    public function authors() {
+        return $this-&gt;has_many_through('Author');
+    }
+}
+
+class AuthorBook extends Model {
+}</pre>
+</div>
+<p>The API for this method works as follows:</p>
+<div class="highlight-python"><pre>// Select a particular book from the database
+$book = Model::factory('Book')-&gt;find_one($book_id);
+
+// Find the authors associated with the book
+$authors = $book-&gt;authors()-&gt;find_many();
+
+// Get the first author
+$first_author = $authors[0];
+
+// Find all the books written by this author
+$first_author_books = $first_author-&gt;books()-&gt;find_many();</pre>
+</div>
+<div class="section" id="overriding-defaults">
+<h3>Overriding defaults<a class="headerlink" href="#overriding-defaults" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">has_many_through</span></tt> method takes up to four arguments, which allow
+us to progressively override default assumptions made by the method.</p>
+<p><strong>First argument: associated model name</strong> - this is mandatory and should
+be the name of the model we wish to select across the association.</p>
+<p><strong>Second argument: intermediate model name</strong> - this is optional and
+defaults to the names of the two associated models, sorted
+alphabetically and concatenated.</p>
+<p><strong>Third argument: custom key to base table on intermediate table</strong> -
+this is optional, and defaults to the name of the base table with
+<tt class="docutils literal"><span class="pre">_id</span></tt> appended.</p>
+<p><strong>Fourth argument: custom key to associated table on intermediate
+table</strong> - this is optional, and defaults to the name of the associated
+table with <tt class="docutils literal"><span class="pre">_id</span></tt> appended.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Associations</a><ul>
+<li><a class="reference internal" href="#summary">Summary</a><ul>
+<li><a class="reference internal" href="#one-to-one">One-to-one</a></li>
+<li><a class="reference internal" href="#one-to-many">One-to-many</a></li>
+<li><a class="reference internal" href="#many-to-many">Many-to-many</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#has-one">Has-one</a></li>
+<li><a class="reference internal" href="#has-many">Has many</a></li>
+<li><a class="reference internal" href="#belongs-to">Belongs to</a></li>
+<li><a class="reference internal" href="#has-many-through">Has many through</a><ul>
+<li><a class="reference internal" href="#overriding-defaults">Overriding defaults</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="models.html"
+                        title="previous chapter">Models</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="querying.html"
+                        title="next chapter">Querying</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/associations.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="querying.html" title="Querying"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="models.html" title="Models"
+             >previous</a> |</li>
+        <li><a href="index.html">Paris 1.2.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Jamie Matthews, Simon Holywell, Durham Hale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

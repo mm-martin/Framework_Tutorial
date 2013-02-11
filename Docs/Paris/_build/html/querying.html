@@ -1,0 +1,220 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Querying &mdash; Paris 1.2.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.2.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Paris 1.2.3 documentation" href="index.html" />
+    <link rel="next" title="Filters" href="filters.html" />
+    <link rel="prev" title="Associations" href="associations.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="filters.html" title="Filters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="associations.html" title="Associations"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Paris 1.2.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="querying">
+<h1>Querying<a class="headerlink" href="#querying" title="Permalink to this headline">¶</a></h1>
+<p>Querying allows you to select data from your database and populate
+instances of your model classes. Queries start with a call to a static
+<em>factory method</em> on the base <tt class="docutils literal"><span class="pre">Model</span></tt> class that takes a single
+argument: the name of the model class you wish to use for your query.
+This factory method is then used as the start of a <em>method chain</em> which
+gives you full access to <a class="reference external" href="http://github.com/j4mie/idiorm/">Idiorm</a>’s fluent query API. <strong>See Idiorm’s
+documentation for details of this API.</strong></p>
+<p>For example:</p>
+<div class="highlight-python"><pre>$users = Model::factory('User')
+    -&gt;where('name', 'Fred')
+    -&gt;where_gte('age', 20)
+    -&gt;find_many();</pre>
+</div>
+<p>You can also use the same shortcut provided by Idiorm when looking up a
+record by its primary key ID:</p>
+<div class="highlight-python"><pre>$user = Model::factory('User')-&gt;find_one($id);</pre>
+</div>
+<p>The only differences between using Idiorm and using Paris for querying
+are as follows:</p>
+<ol class="arabic simple">
+<li>You do not need to call the <tt class="docutils literal"><span class="pre">for_table</span></tt> method to specify the
+database table to use. Paris will supply this automatically based on
+the class name (or the <tt class="docutils literal"><span class="pre">$_table</span></tt> static property, if present).</li>
+<li>The <tt class="docutils literal"><span class="pre">find_one</span></tt> and <tt class="docutils literal"><span class="pre">find_many</span></tt> methods will return instances of
+<em>your model subclass</em>, instead of the base <tt class="docutils literal"><span class="pre">ORM</span></tt> class. Like
+Idiorm, <tt class="docutils literal"><span class="pre">find_one</span></tt> will return a single instance or <tt class="docutils literal"><span class="pre">false</span></tt> if no
+rows matched your query, while <tt class="docutils literal"><span class="pre">find_many</span></tt> will return an array of
+instances, which may be empty if no rows matched.</li>
+<li>Custom filtering, see next section.</li>
+</ol>
+<p>You may also retrieve a count of the number of rows returned by your
+query. This method behaves exactly like Idiorm’s <tt class="docutils literal"><span class="pre">count</span></tt> method:</p>
+<div class="highlight-python"><pre>$count = Model::factory('User')-&gt;where_lt('age', 20)-&gt;count();</pre>
+</div>
+<div class="section" id="getting-data-from-objects-updating-and-inserting-data">
+<h2>Getting data from objects, updating and inserting data<a class="headerlink" href="#getting-data-from-objects-updating-and-inserting-data" title="Permalink to this headline">¶</a></h2>
+<p>The model instances returned by your queries now behave exactly as if
+they were instances of Idiorm’s raw <tt class="docutils literal"><span class="pre">ORM</span></tt> class.</p>
+<p>You can access data:</p>
+<div class="highlight-python"><pre>$user = Model::factory('User')-&gt;find_one($id);
+echo $user-&gt;name;</pre>
+</div>
+<p>Update data and save the instance:</p>
+<div class="highlight-python"><pre>$user = Model::factory('User')-&gt;find_one($id);
+$user-&gt;name = 'Paris';
+$user-&gt;save();</pre>
+</div>
+<p>To create a new (empty) instance, use the <tt class="docutils literal"><span class="pre">create</span></tt> method:</p>
+<div class="highlight-python"><pre>$user = Model::factory('User')-&gt;create();
+$user-&gt;name = 'Paris';
+$user-&gt;save();</pre>
+</div>
+<p>To check whether a property has been changed since the object was
+created (or last saved), call the <tt class="docutils literal"><span class="pre">is_dirty</span></tt> method:</p>
+<div class="highlight-python"><pre>$name_has_changed = $person-&gt;is_dirty('name'); // Returns true or false</pre>
+</div>
+<p>You can also use database expressions when setting values on your model:</p>
+<div class="highlight-python"><pre>$user = Model::factory('User')-&gt;find_one($id);
+$user-&gt;name = 'Paris';
+$user-&gt;set_expr('last_logged_in', 'NOW()');
+$user-&gt;save();</pre>
+</div>
+<p>Of course, because these objects are instances of your base model
+classes, you can also call methods that you have defined on them:</p>
+<div class="highlight-python"><pre>class User extends Model {
+    public function full_name() {
+        return $this-&gt;first_name . ' ' . $this-&gt;last_name;
+    }
+}
+
+$user = Model::factory('User')-&gt;find_one($id);
+echo $user-&gt;full_name();</pre>
+</div>
+<p>To delete the database row associated with an instance of your model,
+call its <tt class="docutils literal"><span class="pre">delete</span></tt> method:</p>
+<div class="highlight-python"><pre>$user = Model::factory('User')-&gt;find_one($id);
+$user-&gt;delete();</pre>
+</div>
+<p>You can also get the all the data wrapped by a model subclass instance
+using the <tt class="docutils literal"><span class="pre">as_array</span></tt> method. This will return an associative array
+mapping column names (keys) to their values.</p>
+<p>The <tt class="docutils literal"><span class="pre">as_array</span></tt> method takes column names as optional arguments. If one
+or more of these arguments is supplied, only matching column names will
+be returned.</p>
+<div class="highlight-python"><pre>class Person extends Model {
+}
+
+$person = Model::factory('Person')-&gt;create();
+
+$person-&gt;first_name = 'Fred';
+$person-&gt;surname = 'Bloggs';
+$person-&gt;age = 50;
+
+// Returns array('first_name' =&gt; 'Fred', 'surname' =&gt; 'Bloggs', 'age' =&gt; 50)
+$data = $person-&gt;as_array();
+
+// Returns array('first_name' =&gt; 'Fred', 'age' =&gt; 50)
+$data = $person-&gt;as_array('first_name', 'age');</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Querying</a><ul>
+<li><a class="reference internal" href="#getting-data-from-objects-updating-and-inserting-data">Getting data from objects, updating and inserting data</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="associations.html"
+                        title="previous chapter">Associations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="filters.html"
+                        title="next chapter">Filters</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/querying.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="filters.html" title="Filters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="associations.html" title="Associations"
+             >previous</a> |</li>
+        <li><a href="index.html">Paris 1.2.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Jamie Matthews, Simon Holywell, Durham Hale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
